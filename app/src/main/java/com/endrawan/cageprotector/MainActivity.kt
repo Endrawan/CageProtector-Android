@@ -11,6 +11,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -18,14 +21,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.endrawan.cageprotector.models.Axis
+import com.endrawan.cageprotector.models.Cage
 import com.endrawan.cageprotector.ui.theme.CageProtectorTheme
+import com.endrawan.cageprotector.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CageProtectorTheme {
-                HomeScreen(Modifier.padding(8.dp))
+                HomeScreen(Modifier.padding(8.dp), MainViewModel())
 //                // A surface container using the 'background' color from the theme
 //                Surface(
 //                    modifier = Modifier.fillMaxSize(),
@@ -187,7 +192,15 @@ fun PIRCard(PIR: BooleanArray, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel
+) {
+    val stateCage: MutableState<Cage> = rememberSaveable { mutableStateOf(Cage(null, null, null, null))}
+    mainViewModel.startCageListener {
+        stateCage.value = it
+    }
+
     Column(
         modifier = modifier
     ) {
@@ -316,6 +329,8 @@ fun PIRCardPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 fun HomeScreenPreview() {
     CageProtectorTheme {
-        HomeScreen(Modifier.padding(8.dp))
+        HomeScreen(Modifier.padding(8.dp), MainViewModel())
     }
 }
+
+// TODO fix MainViewModel
