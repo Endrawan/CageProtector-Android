@@ -1,5 +1,7 @@
 package com.endrawan.cageprotector
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.endrawan.cageprotector.ui.theme.CageProtectorTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +32,11 @@ class MainActivity : ComponentActivity() {
 //                }
             }
         }
+
+        Intent(this, SyncFirebaseService::class.java).also {
+            startService(it)
+        }
+//        workManagerTest(applicationContext)
     }
 }
 
@@ -41,4 +51,10 @@ fun DefaultPreview() {
     CageProtectorTheme {
         Greeting("Android")
     }
+}
+
+fun workManagerTest(appContext: Context) {
+    val syncWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+        .build()
+    WorkManager.getInstance(appContext).enqueue(syncWorkRequest)
 }

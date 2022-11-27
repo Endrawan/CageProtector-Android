@@ -34,7 +34,7 @@ fun HomeScreen(
     Column(
         modifier = modifier
     ) {
-        StatusPanel()
+        StatusPanel(stateCage.systemStatus)
         Row {
             AxisCard(
                 Axis(stateCage.gyroscope.x, stateCage.gyroscope.y, stateCage.gyroscope.z),

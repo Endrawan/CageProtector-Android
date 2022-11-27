@@ -15,7 +15,7 @@ import com.endrawan.cageprotector.models.Axis
 import com.endrawan.cageprotector.ui.theme.CageProtectorTheme
 
 @Composable
-fun StatusPanel(modifier: Modifier = Modifier) {
+fun StatusPanel(systemStatus: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -31,8 +31,16 @@ fun StatusPanel(modifier: Modifier = Modifier) {
         Column(
             modifier = modifier.padding(8.dp)
         ) {
+            lateinit var statusText: String
+
             Text(text = "Status")
-            Text(text = "Aman", style = MaterialTheme.typography.h1)
+            when(systemStatus) {
+                Config.SYSTEM_STATUS_STANDBY -> statusText = "Aman"
+                Config.SYSTEM_STATUS_WARNING -> statusText = "Peringatan"
+                Config.SYSTEM_STATUS_DANGER -> statusText = "Bahaya"
+                Config.SYSTEM_STATUS_DOOR_OPENED -> statusText = "Kandang dibuka"
+            }
+            Text(text = statusText, style = MaterialTheme.typography.h1)
         }
     }
 }
@@ -66,16 +74,6 @@ fun AxisCard(axis: Axis, title: String, imageId: Int, modifier: Modifier = Modif
             Text(text = "X: ${axis.x}", style = MaterialTheme.typography.body1)
             Text(text = "Y: ${axis.y}", style = MaterialTheme.typography.body1)
             Text(text = "Z: ${axis.z}", style = MaterialTheme.typography.body1)
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(0.dp, 8.dp),
-//                horizontalArrangement = Arrangement.SpaceEvenly
-//            ) {
-//                Text(text = "X: ${axis.x}", style = MaterialTheme.typography.body1)
-//                Text(text = "Y: ${axis.y}", style = MaterialTheme.typography.body1)
-//                Text(text = "Z: ${axis.z}", style = MaterialTheme.typography.body1)
-//            }
         }
     }
 }
@@ -159,7 +157,7 @@ fun PIRCard(PIR: List<Boolean>, modifier: Modifier = Modifier) {
 @Composable
 fun StatusPanelPreview() {
     CageProtectorTheme {
-        StatusPanel()
+        StatusPanel(Config.SYSTEM_STATUS_STANDBY)
     }
 }
 

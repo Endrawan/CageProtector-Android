@@ -24,6 +24,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".SyncFirebaseService"
+            android:exported="false"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="com.endrawan.cageprotector.SyncFirebaseService" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".StartSyncFirebaseAtBoot"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

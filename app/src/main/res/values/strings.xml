@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CageProtector</string>
+    <string name="channel_name">Cage Protector Channel Name</string>
+    <string name="channel_description">Cage Protector Channel Description</string>
 </resources>

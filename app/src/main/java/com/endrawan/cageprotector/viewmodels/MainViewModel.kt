@@ -10,7 +10,6 @@ import com.google.firebase.database.ValueEventListener
 
 class MainViewModel : ViewModel() {
     private val TAG = "MainViewModel"
-//    val response: MutableState<DataState> = mutableStateOf(DataState.Empty)
 
     fun startCageListener(onCageChanged: (cage: Cage) -> Unit) {
         val database = FirebaseDatabase.getInstance().getReference("")
