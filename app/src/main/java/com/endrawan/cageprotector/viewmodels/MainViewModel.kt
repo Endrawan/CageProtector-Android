@@ -2,18 +2,27 @@ package com.endrawan.cageprotector.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.endrawan.cageprotector.Config
 import com.endrawan.cageprotector.models.Cage
+import com.endrawan.cageprotector.models.Fingerprint
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainViewModel : ViewModel() {
     private val TAG = "MainViewModel"
+    private val database = FirebaseDatabase.getInstance()
+
+    init{
+    }
 
     fun startCageListener(onCageChanged: (cage: Cage) -> Unit) {
-        val database = FirebaseDatabase.getInstance().getReference("")
-        database.addValueEventListener(
+        val ref = database.getReference("")
+        ref.addValueEventListener(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val tempCage = snapshot.getValue(Cage::class.java)
@@ -30,23 +39,34 @@ class MainViewModel : ViewModel() {
         )
     }
 
-//    private fun fetchDataFromFirebase() {
-//        lateinit var tempCage: Cage
-//        response.value = DataState.Loading
-//        FirebaseDatabase.getInstance().getReference("").addValueEventListener(
-//            object: ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    val cage = snapshot.getValue(Cage::class.java)
-//                    if (cage != null)
-//                        tempCage = cage
-//                    response.value = DataState.Success(tempCage)
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    response.value = DataState.Failure(error.message)
-//                }
-//
-//            }
-//        )
-//    }
+    fun upsertValue(endpoint: String, value:Any?) {
+        val ref = database.getReference(endpoint)
+        ref.setValue(value)
+        updateTimestamp()
+    }
+
+    fun fingerprintStartEnrollMode() {
+        val fingerprint = Fingerprint(Config.FINGERPRINT_STATUS_ENROLL, Config.FINGERPRINT_ENROLL_STATUS_READY)
+        val ref = database.getReference(Config.DB_ENDPOINT_FINGERPRINT)
+        ref.setValue(fingerprint)
+        upsertValue(Config.DB_ENDPOINT_SYSTEM_STATUS, Config.SYSTEM_STATUS_FINGERPRINT_ENROLL)
+    }
+
+    fun fingerprintStopEnrollMode() {
+        val fingerprint = Fingerprint(Config.FINGERPRINT_STATUS_LISTENING, Config.FINGERPRINT_ENROLL_STATUS_READY)
+        val ref = database.getReference(Config.DB_ENDPOINT_FINGERPRINT)
+        ref.setValue(fingerprint)
+        upsertValue(Config.DB_ENDPOINT_SYSTEM_STATUS, Config.SYSTEM_STATUS_STANDBY)
+    }
+
+    private fun getCurrentTimestamp(): String {
+        val currentTime = Calendar.getInstance().time
+        val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        return sdf.format(currentTime)
+    }
+
+    private fun updateTimestamp() {
+        val ref = database.getReference(Config.DB_ENDPOINT_LAST_UPDATED_ANDROID)
+        ref.setValue(getCurrentTimestamp())
+    }
 }

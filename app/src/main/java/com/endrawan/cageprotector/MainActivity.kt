@@ -23,38 +23,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             CageProtectorTheme {
                 HomeScreen(Modifier.padding(8.dp))
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colors.background
-//                ) {
-//                    HomeScreen()
-//                }
             }
         }
 
         Intent(this, SyncFirebaseService::class.java).also {
             startService(it)
         }
-//        workManagerTest(applicationContext)
     }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CageProtectorTheme {
-        Greeting("Android")
-    }
-}
-
-fun workManagerTest(appContext: Context) {
-    val syncWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<SyncWorker>()
-        .build()
-    WorkManager.getInstance(appContext).enqueue(syncWorkRequest)
 }

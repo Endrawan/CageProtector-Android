@@ -3,6 +3,7 @@ package com.endrawan.cageprotector
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -49,22 +50,46 @@ class SyncFirebaseService : Service() {
             }
 
         })
+
+        Log.d(TAG, "SyncFirebaseService successfully started")
     }
 
     private fun pushNotification(cage: Cage) {
         createNotificationChannel()
 
-        val message =
-            "Bahaya! Kandang anda sedang dicuri!. "
+        var message = ""
+        var title = ""
+
+        when(cage.systemStatus) {
+            Config.SYSTEM_STATUS_WARNING -> {
+                message =
+                    "Hati-hati! Ada sesuatu mencurigakan di kandang burungmu!"
+                title =
+                    "Peringatan kandang"
+            }
+            Config.SYSTEM_STATUS_DANGER -> {
+                message =
+                    "Bahaya! Kandang burung Anda sedang dicuri!"
+                title =
+                    "Kandang dicuri!"
+            }
+        }
+
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
+        val pendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, intent, 0)
+        }
+
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.icon)
-            .setContentTitle("Kandang Dicuri!!")
+            .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
