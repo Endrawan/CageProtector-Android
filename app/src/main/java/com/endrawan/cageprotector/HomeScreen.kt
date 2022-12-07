@@ -154,7 +154,7 @@ fun HomeScreen(
             )
         }
 
-        FingerprintEnrollDialog(fingerprintDialogStatus, {
+        FingerprintEnrollDialog(fingerprintDialogStatus, stateCage.fingerprint,{
             mainViewModel.fingerprintStopEnrollMode()
             fingerprintDialogStatus = false
         }, {

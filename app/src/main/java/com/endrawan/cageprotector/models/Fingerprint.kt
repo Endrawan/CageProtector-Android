@@ -7,6 +7,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Fingerprint(
-    var status: Int = Config.FINGERPRINT_STATUS_LISTENING,
+    var steps: Int = 0,
     @get:PropertyName("enroll_status") @set:PropertyName("enroll_status") var enrollStatus: Int = Config.FINGERPRINT_ENROLL_STATUS_SUCCESS
 ) : Parcelable

@@ -46,16 +46,16 @@ class MainViewModel : ViewModel() {
     }
 
     fun fingerprintStartEnrollMode() {
-        val fingerprint = Fingerprint(Config.FINGERPRINT_STATUS_ENROLL, Config.FINGERPRINT_ENROLL_STATUS_READY)
-        val ref = database.getReference(Config.DB_ENDPOINT_FINGERPRINT)
-        ref.setValue(fingerprint)
+//        val fingerprint = Fingerprint(enrollStatus = Config.FINGERPRINT_ENROLL_STATUS_ENROLLING)
+        val ref = database.getReference(Config.DB_ENPOINT_FINGERPRINT_ENROLLMENT_STATUS)
+        ref.setValue(Config.FINGERPRINT_ENROLL_STATUS_ENROLLING)
         upsertValue(Config.DB_ENDPOINT_SYSTEM_STATUS, Config.SYSTEM_STATUS_FINGERPRINT_ENROLL)
     }
 
     fun fingerprintStopEnrollMode() {
-        val fingerprint = Fingerprint(Config.FINGERPRINT_STATUS_LISTENING, Config.FINGERPRINT_ENROLL_STATUS_READY)
-        val ref = database.getReference(Config.DB_ENDPOINT_FINGERPRINT)
-        ref.setValue(fingerprint)
+//        val fingerprint = Fingerprint(enrollStatus = Config.FINGERPRINT_ENROLL_STATUS_ENROLLING)
+        val ref = database.getReference(Config.DB_ENPOINT_FINGERPRINT_ENROLLMENT_STATUS)
+        ref.setValue(0)
         upsertValue(Config.DB_ENDPOINT_SYSTEM_STATUS, Config.SYSTEM_STATUS_STANDBY)
     }
 

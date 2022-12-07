@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.endrawan.cageprotector.models.Axis
 import com.endrawan.cageprotector.models.Cage
+import com.endrawan.cageprotector.models.Fingerprint
 import com.endrawan.cageprotector.ui.theme.CageProtectorTheme
 
 @Composable
@@ -225,7 +226,7 @@ fun PIRCard(PIR: List<Boolean>, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FingerprintEnrollDialog(dialogStatus: Boolean, onDismiss: () -> Unit, onDone:() -> Unit, modifier: Modifier = Modifier) {
+fun FingerprintEnrollDialog(dialogStatus: Boolean,fingerprint: Fingerprint,  onDismiss: () -> Unit, onDone:() -> Unit, modifier: Modifier = Modifier) {
     if (dialogStatus) {
         Dialog(
             onDismissRequest = onDismiss,
@@ -239,6 +240,21 @@ fun FingerprintEnrollDialog(dialogStatus: Boolean, onDismiss: () -> Unit, onDone
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val enrollStatusText = when(fingerprint.enrollStatus) {
+                        Config.FINGERPRINT_ENROLL_STATUS_ENROLLING -> "Mulai mengubah..."
+                        Config.FINGERPRINT_ENROLL_STATUS_WAITING -> "Menunggu respon dari sistem"
+                        Config.FINGERPRINT_ENROLL_STATUS_SUCCESS -> "Mengubah fingerprint berhasil!"
+                        Config.FINGERPRINT_ENROLL_STATUS_FAILED -> "Gagal mengubah fingerprint!"
+                        else -> "Error dalam enroll status"
+                    }
+
+                    val stepsText = when(fingerprint.steps) {
+                        Config.FINGERPRINT_ENROLL_STEPS_PUT_FINGER -> "Letakkan jari pada sensor"
+                        Config.FINGERPRINT_ENROLL_STEPS_REMOVE_FINGER -> "Lepaskan jari pada sensor"
+                        Config.FINGERPRINT_ENROLL_STEPS_PUT_FINGER_AGAIN -> "Letakkan jari pada sensor kembali"
+                        Config.FINGERPRINT_ENROLL_STEPS_DONE -> "Mengubah fingerprint selesai"
+                        else -> "Menunggu respon dari sistem"
+                    }
                     Text(
                         text = "Silahkan letakkan sidik jari Anda pada sensor",
                         style = MaterialTheme.typography.h2,
@@ -251,7 +267,8 @@ fun FingerprintEnrollDialog(dialogStatus: Boolean, onDismiss: () -> Unit, onDone
                         modifier = Modifier.size(56.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Status enrollment")
+                    Text(text = enrollStatusText)
+                    Text(text = stepsText)
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         modifier = Modifier
@@ -296,8 +313,14 @@ fun CalibrateMPU6050Dialog(dialogStatus: Boolean, baseMPU6050: MPU6050, onDismis
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = """
-                            Accel -> x:${baseMPU6050.accelerometer.x} y:${baseMPU6050.accelerometer.y} z:${baseMPU6050.accelerometer.z}
-                            Gyro -> x:${baseMPU6050.gyroscope.x} y:${baseMPU6050.gyroscope.y} z:${baseMPU6050.gyroscope.z} 
+                            Accel -> 
+                            x:${baseMPU6050.accelerometer.x} 
+                            y:${baseMPU6050.accelerometer.y} 
+                            z:${baseMPU6050.accelerometer.z}
+                            Gyro -> 
+                            x:${baseMPU6050.gyroscope.x} 
+                            y:${baseMPU6050.gyroscope.y} 
+                            z:${baseMPU6050.gyroscope.z} 
                         """.trimIndent()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -369,7 +392,9 @@ fun PIRCardPreview() {
 @Composable
 fun FingerprintEnrollDialogPreview() {
     CageProtectorTheme {
-        FingerprintEnrollDialog(true, {}, {}, Modifier.padding(8.dp))
+        FingerprintEnrollDialog(true,
+            Fingerprint(Config.FINGERPRINT_ENROLL_STEPS_PUT_FINGER,
+                Config.FINGERPRINT_ENROLL_STATUS_ENROLLING),{}, {}, Modifier.padding(8.dp))
     }
 }
 
